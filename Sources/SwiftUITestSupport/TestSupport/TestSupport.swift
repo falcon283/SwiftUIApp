@@ -8,7 +8,7 @@ public enum TestSupport {
 
   @TaskLocal
   private static var storage: [String: ThreadSafe<Any>] = [:]
-
+  
   /// This method is an helper that should be used only in case you are writing your custom DynamicProperty.
   ///
   /// Within the implementation of your custom `DynamicProperty` you will access the TaskLocal storage which contains what has been injected by the ``given(_:withDependencies:expect:)`` during Unit Test.
@@ -43,5 +43,20 @@ public enum TestSupport {
           let value = threadSafe.wrappedValue as? Bool,
           value == true else { return false }
     return true
+  }
+}
+
+extension TestSupport {
+
+  static func environmentKey(for keyPath: AnyKeyPath) -> String {
+    return "Environment_\(String(describing: keyPath))"
+  }
+
+  static func environmentKey<Value>(for valueType: Value.Type) -> String {
+    "Environment_\(String(describing: valueType))"
+  }
+
+  static func environmentObjectKey<ObjectType>(for objectType: ObjectType.Type) -> String where ObjectType: ObservableObject {
+    "EnvironmentObject_\(String(describing: objectType))"
   }
 }

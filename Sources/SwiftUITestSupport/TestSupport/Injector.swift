@@ -1,4 +1,14 @@
+public import CoreData
+public import SwiftUI
 internal import SwiftAppUtilities
+
+extension Notification.Name {
+  static let swiftUITestSupportMissingInjection = Notification.Name("_SwiftUIAppTestSupport_MissingInjection")
+}
+
+extension Notification {
+  static let swiftUITestSupportMissingInjectionKeyDescription = "_SwiftUITestSupportMissingInjectionKeyDescription"
+}
 
 /// The injector object is used to support dependency injection while running Unit Tests.
 ///
@@ -24,5 +34,62 @@ public struct Injector: Sendable {
   /// they will be automatically shadowed so you don't have to care about them unless you explicitly use `@SwiftUI.Environment`.
   public nonmutating func inject<T>(_ value: T, for key: String) {
     self.storage[key] = value
+  }
+}
+
+// MARK: - Environment
+
+public extension Injector {
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `EnvironmentValues` keyPath into the Shadows.
+  ///
+  /// - Parameters:
+  ///   - keyPath: The keyPath for the injection. Must be exactly the same as the one used in your implementation.
+  ///   - value: The value to inject
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  ///
+  /// - Warning: You must use exactly the same `keyPath` as the implementation.
+  /// If not the test will fail and will point you out the missing keyPath.
+  @discardableResult
+  nonmutating func environment<T>(_ keyPath: KeyPath<EnvironmentValues, T>, _ value: T) -> Injector {
+    let key = TestSupport.environmentKey(for: keyPath)
+    self.inject(value, for: key)
+    return self
+  }
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `Observable` into the Shadows.
+  ///
+  /// - Parameter observable: The `Observable` to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  ///
+  /// - Warning: You must use exactly the same `T` as the implementation.
+  /// If not the test will fail and will point you out the missing type..
+  @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+  @discardableResult
+  nonmutating func environment<T: Observable & AnyObject>(_ observable: T) -> Injector {
+    let key = TestSupport.environmentKey(for: T.self)
+    let keyOptional = TestSupport.environmentKey(for: T?.self)
+    self.inject(observable, for: key)
+    self.inject(observable, for: keyOptional)
+    return self
+  }
+}
+
+// MARK: - EnvironmentObject
+
+public extension Injector {
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject` into the Shadows.
+  ///
+  /// - Parameter object: The `ObservableObject` to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  ///
+  /// - Warning: You must use exactly the same `T` as the implementation.
+  /// If not the test will fail and will point you out the missing type..
+  @discardableResult
+  nonmutating func environmentObject<T: ObservableObject>(_ object: T) -> Injector {
+    let key = TestSupport.environmentObjectKey(for: T.self)
+    self.inject(object, for: key)
+    return self
   }
 }
