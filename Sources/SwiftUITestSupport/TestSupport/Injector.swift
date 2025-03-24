@@ -93,3 +93,29 @@ public extension Injector {
     return self
   }
 }
+
+// MARK: - Storage
+
+public extension Injector {
+
+  /// This is used to inject a value retrieved by ``AppStorage`` or ``SceneStorage`` Shadows.
+  ///
+  /// The injected value mimic a different value into `UserDefault`. If present the ``AppStorage`` and ``SceneStorage``
+  /// will prefer the injected value over the default value as it would happen in real case scenario.
+  ///
+  /// - Parameter value: The object to inject.
+  /// - Parameter key: The storage key of the ``AppStorage`` or ``SceneStorage``.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  ///
+  /// - Note: The injected value type is inferred. Make sure to inject the proper one if you are using type inference.
+  /// As example if you inject `.storage(1, for: "doubleKey")` the value inferred is `Int` and thus if the implementation key is expecting Double
+  /// the injection lookup will fail. In this case you should inject `1.0` or `Double(1)` instead.
+  ///
+  /// - Warning: You must use exactly the same `key` as the implementation.
+  @discardableResult
+  nonmutating func storage<T>(_ value: T, for key: String) -> Injector {
+    let key = TestSupport.storageKey(for: key)
+    self.inject(value, for: key)
+    return self
+  }
+}

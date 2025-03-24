@@ -59,4 +59,8 @@ extension TestSupport {
   static func environmentObjectKey<ObjectType>(for objectType: ObjectType.Type) -> String where ObjectType: ObservableObject {
     "EnvironmentObject_\(String(describing: objectType))"
   }
+
+  static func storageKey(for storageKey: String) -> String {
+    "Storage_\(storageKey)"
+  }
 }
