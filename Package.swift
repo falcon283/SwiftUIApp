@@ -4,13 +4,23 @@
 import Foundation
 import PackageDescription
 
+let testSupportEnabled = ProcessInfo().environment["SWIFTUIAPP_TEST_SUPPORT"] == "TRUE"
+
+let canTestSwiftUISettings: [SwiftSetting]? = !testSupportEnabled ? nil : [
+  .define("canTestSwiftUI", .when(configuration: .debug))
+]
+
 let packageConfiguration: (products: [Product], targets: [Target]) = {
   (
     [
+      .library(name: "SwiftUIApp", targets: ["SwiftUIApp"]),
       .library(name: "SwiftAppUtilities", targets: ["SwiftAppUtilities"]),
       .library(name: "SwiftUITestSupport", targets: ["SwiftUITestSupport"]),
     ],
     [
+      .target(name: "SwiftUIApp", dependencies: ["SwiftAppUtilities", "SwiftUITestSupport"], swiftSettings: canTestSwiftUISettings),
+      .testTarget(name: "SwiftUIAppTests", dependencies: ["SwiftUIApp"], swiftSettings: canTestSwiftUISettings),
+
       .target(name: "SwiftAppUtilities"),
       .testTarget(name: "SwiftAppUtilitiesTests", dependencies: ["SwiftAppUtilities"]),
 
