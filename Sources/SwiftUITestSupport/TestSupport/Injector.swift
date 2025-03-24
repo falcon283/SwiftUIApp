@@ -119,3 +119,71 @@ public extension Injector {
     return self
   }
 }
+
+// MARK: - Focus
+
+public extension Injector {
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject a `FocusedValues` keyPath into the Shadows.
+  ///
+  /// - Parameters:
+  ///   - keyPath: The keyPath for the injection. Must be exactly the same as the one used in your implementation.
+  ///   - value: The value to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  ///
+  /// - Warning: You must use exactly the same `keyPath` as the implementation.
+  /// If not the test will fail and will point you out the missing keyPath.
+  @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+  @discardableResult
+  nonmutating func focusedValue<Value>(_ keyPath: WritableKeyPath<FocusedValues, Value?>, _ value: Value) -> Injector {
+    let key = TestSupport.focusedValueKey(for: keyPath)
+    self.inject(value, for: key)
+    return self
+  }
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject` keyPath into the Shadows.
+  ///
+  /// - Parameter object: The object to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+  @discardableResult
+  nonmutating func focusedObject<T>(_ object: T) -> Injector where T : ObservableObject {
+    let key = TestSupport.focusedObjectKey(for: T.self)
+    self.inject(object, for: key)
+    return self
+  }
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject?` keyPath into the Shadows.
+  ///
+  /// - Parameter object: The object to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  @discardableResult
+  nonmutating func focusedObject<T>(_ object: T?) -> Injector where T : ObservableObject {
+    let key = TestSupport.focusedObjectKey(for: T.self)
+    if let object {
+      self.inject(object, for: key)
+    } else {
+      self.inject(Optional<T>.none, for: key)
+    }
+    return self
+  }
+}
+
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+public extension Injector {
+  
+  /// Like the  SwiftUI `View` counterpart, it is used to inject an `Observable?` keyPath into the Shadows.
+  ///
+  /// - Parameter object: The object to inject.
+  /// - Returns: The modified `Injector` so to continue the injection chain easily.
+  @discardableResult
+  nonmutating func focusedValue<T>(_ object: T?) -> Injector where T : AnyObject, T : Observable {
+    let key = TestSupport.focusedValueKey(for: T.self)
+    if let object {
+      self.inject(object, for: key)
+    } else {
+      self.inject(Optional<T>.none, for: key)
+    }
+    return self
+  }
+}

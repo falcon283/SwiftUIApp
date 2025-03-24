@@ -63,4 +63,16 @@ extension TestSupport {
   static func storageKey(for storageKey: String) -> String {
     "Storage_\(storageKey)"
   }
+
+  static func focusedObjectKey<ObjectType>(for objectType: ObjectType.Type) -> String where ObjectType: ObservableObject {
+    "FocusedObject_\(String(describing: objectType))"
+  }
+
+  static func focusedValueKey(for keyPath: AnyKeyPath) -> String {
+    "FocusedValue_\(String(describing: keyPath))"
+  }
+
+  static func focusedValueKey<Value>(for valueType: Value.Type) -> String {
+    "FocusedValue_\(String(describing: valueType))"
+  }
 }
