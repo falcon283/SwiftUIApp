@@ -17,7 +17,8 @@ let packageConfiguration: (products: [Product], targets: [Target]) = {
       .target(name: "SwiftUITestSupport", dependencies: ["SwiftAppUtilities"]),
       .testTarget(
         name: "SwiftUITestSupportTests",
-        dependencies: ["SwiftUITestSupport"]
+        dependencies: ["SwiftUITestSupport"],
+        resources: [.process("CoreData/TestModel.xcdatamodeld")]
       )
     ]
   )

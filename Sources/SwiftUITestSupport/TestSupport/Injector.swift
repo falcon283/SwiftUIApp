@@ -4,6 +4,7 @@ internal import SwiftAppUtilities
 
 extension Notification.Name {
   static let swiftUITestSupportMissingInjection = Notification.Name("_SwiftUIAppTestSupport_MissingInjection")
+  static let swiftUITestSupportMissingCoreDataInjection = Notification.Name("_SwiftUITestSupportMissingCoreDataInjection")
 }
 
 extension Notification {
@@ -18,7 +19,7 @@ public struct Injector: Sendable {
 
   @ThreadSafe
   private(set) var storage: [String: Any] = [TestSupport.unitTestKey: true]
-  
+
   /// This method could be used in the remote possibility you are extending `Injector` because your codebase implements a custom `DynamicProperty`
   /// property wrapper and you want to enable it for Unit Testing purpose.
   ///
@@ -40,7 +41,7 @@ public struct Injector: Sendable {
 // MARK: - Environment
 
 public extension Injector {
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `EnvironmentValues` keyPath into the Shadows.
   ///
   /// - Parameters:
@@ -56,14 +57,14 @@ public extension Injector {
     self.inject(value, for: key)
     return self
   }
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `Observable` into the Shadows.
   ///
   /// - Parameter observable: The `Observable` to inject.
   /// - Returns: The modified `Injector` so to continue the injection chain easily.
   ///
   /// - Warning: You must use exactly the same `T` as the implementation.
-  /// If not the test will fail and will point you out the missing type..
+  /// If not the test will fail and will point you out the missing type.
   @available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
   @discardableResult
   nonmutating func environment<T: Observable & AnyObject>(_ observable: T) -> Injector {
@@ -78,14 +79,14 @@ public extension Injector {
 // MARK: - EnvironmentObject
 
 public extension Injector {
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject` into the Shadows.
   ///
   /// - Parameter object: The `ObservableObject` to inject.
   /// - Returns: The modified `Injector` so to continue the injection chain easily.
   ///
   /// - Warning: You must use exactly the same `T` as the implementation.
-  /// If not the test will fail and will point you out the missing type..
+  /// If not the test will fail and will point you out the missing type.
   @discardableResult
   nonmutating func environmentObject<T: ObservableObject>(_ object: T) -> Injector {
     let key = TestSupport.environmentObjectKey(for: T.self)
@@ -123,7 +124,7 @@ public extension Injector {
 // MARK: - Focus
 
 public extension Injector {
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject a `FocusedValues` keyPath into the Shadows.
   ///
   /// - Parameters:
@@ -140,7 +141,7 @@ public extension Injector {
     self.inject(value, for: key)
     return self
   }
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject` keyPath into the Shadows.
   ///
   /// - Parameter object: The object to inject.
@@ -152,7 +153,7 @@ public extension Injector {
     self.inject(object, for: key)
     return self
   }
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `ObservableObject?` keyPath into the Shadows.
   ///
   /// - Parameter object: The object to inject.
@@ -171,7 +172,7 @@ public extension Injector {
 
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
 public extension Injector {
-  
+
   /// Like the  SwiftUI `View` counterpart, it is used to inject an `Observable?` keyPath into the Shadows.
   ///
   /// - Parameter object: The object to inject.
@@ -185,5 +186,121 @@ public extension Injector {
       self.inject(Optional<T>.none, for: key)
     }
     return self
+  }
+}
+
+// MARK: - CoreData
+
+public extension Injector {
+
+  static let coreDataNotLoadedMessage = """
+  💥 Core Data Stack is missing!!!
+  Injector.startCoreData(name:bundle:) call is missing from the Injector modifier closure of the given(_:withDependencies:expect:)
+  """
+
+  /// This method is used to bootstrap the CoreData during the ``given(_:withDependencies:expect:)`` execution.
+  /// If you are using CoreData DynamicProperties in your implementation such ``FetchRequest`` or ``SectionedFetchRequest`` then it's mandatory
+  /// to call this method or CoreData will crash because will not be able to determine the Model.
+  ///
+  /// CoreData will be loaded as in memory only.
+  /// You have chance to inject objects for the test purpose by calling ``CoreDataInjector/insert(_:update:)``.
+  ///
+  /// - Parameters:
+  ///   - name: The CoreData Model name to load.
+  ///   - bundle: The bindle where the Model is located.
+  /// - Returns: A ``CoreDataInjector`` that should be used to insert you custom `NSManagedObject`s.
+  @MainActor
+  @discardableResult
+  nonmutating func startCoreData(
+    named name: String,
+    bundle: Bundle
+  ) async throws -> CoreDataInjector {
+
+    enum CoreDataError: Error, CustomDebugStringConvertible {
+
+      case modelNotFound(String)
+      case persistentStoreDescriptionNotFound
+      case unableToLoad(Error)
+
+      var debugDescription: String {
+        switch self {
+        case let .modelNotFound(name):
+          return "CoreData Model named \(name).momd not found."
+        case .persistentStoreDescriptionNotFound:
+          return "Unable to find the persistentStoreDescription."
+        case let .unableToLoad(error):
+          return "Unable to load the persistentStores: \(error)"
+        }
+      }
+    }
+
+    guard let modelUrl = bundle.url(forResource: name, withExtension: "momd"),
+          let model = NSManagedObjectModel(contentsOf: modelUrl)
+    else { throw CoreDataError.modelNotFound(name) }
+
+    let container = NSPersistentContainer(name: name, managedObjectModel: model)
+
+    guard let storeDescription = container.persistentStoreDescriptions.first
+    else { throw CoreDataError.persistentStoreDescriptionNotFound }
+
+    storeDescription.type = NSInMemoryStoreType
+    storeDescription.shouldAddStoreAsynchronously = false
+    if #available(iOS 16.0, *) {
+      storeDescription.url = URL(filePath: "/dev/null")
+    } else {
+      storeDescription.url = URL(fileURLWithPath: "/dev/null")
+    }
+
+    do {
+      try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        container.loadPersistentStores { _, error in
+          if let error {
+            continuation.resume(throwing: error)
+          } else {
+            continuation.resume()
+          }
+        }
+      }
+    } catch {
+      throw CoreDataError.unableToLoad(error)
+    }
+
+    let injector = CoreDataInjector(context: container.viewContext)
+
+    self.inject(container, for: TestSupport.persistentContainerKey)
+
+    return injector
+  }
+}
+
+/// An helper used to Inject CoreData `NSManagedObject`s into the loaded in memory Model.
+public final class CoreDataInjector {
+
+  private let context: NSManagedObjectContext
+
+  /// Designated initializer
+  ///
+  /// - Parameter context: The context to use to insert the objects.
+  init(context: NSManagedObjectContext) {
+    self.context = context
+  }
+
+  /// You use this method to modify the content of the in memory CoreData Model just loaded.
+  ///
+  /// It is not mandatory to call this method if your specific unit test function does not assert the presence of objects inside the Model.
+  ///
+  /// - Parameters:
+  ///   - type: The type of object to create.
+  ///   - update: A function offer you a brand new just created `T` so you can modify it's properties before it get's saved.
+  /// - Returns: The modified `CoreDataInjector` so to continue the injection chain easily by adding more objects.
+  @discardableResult
+  public func insert<T: NSManagedObject>(_ type: T.Type, update: (T) -> Void) -> CoreDataInjector {
+    let object = type.init(context: self.context)
+    update(object)
+    return self
+  }
+
+  deinit {
+    try? self.context.save()
   }
 }

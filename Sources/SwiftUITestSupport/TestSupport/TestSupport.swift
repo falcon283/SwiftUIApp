@@ -5,6 +5,7 @@ private import SwiftAppUtilities
 public enum TestSupport {
 
   static let unitTestKey = UUID().uuidString
+  static let persistentContainerKey = UUID().uuidString
 
   @TaskLocal
   private static var storage: [String: ThreadSafe<Any>] = [:]

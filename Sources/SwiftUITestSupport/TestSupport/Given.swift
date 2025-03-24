@@ -3,11 +3,15 @@ private import SwiftAppUtilities
 
 private enum GivenError: Error, CustomDebugStringConvertible {
   case missingInjection(keys: [String])
+  case missingCoreDataInjection
 
   var debugDescription: String {
     switch self {
     case let .missingInjection(keys):
       "Missing injection for keys: \(keys)"
+
+    case .missingCoreDataInjection:
+      "Missing CoreData injection"
     }
   }
 }
@@ -24,12 +28,12 @@ private enum GivenError: Error, CustomDebugStringConvertible {
 @MainActor
 public func given<V: View>(
   _ sut: @autoclosure () -> V,
-  withDependencies injectDependencies: (inout Injector) async -> Void = { _ in },
+  withDependencies injectDependencies: (inout Injector) async throws -> Void = { _ in },
   expect: (V) async throws -> Void
 ) async throws {
 
   var injector = Injector()
-  await injectDependencies(&injector)
+  try await injectDependencies(&injector)
 
   let observation = startObservingMissingInjectionNotifications()
   defer { observation.unregisterNotifications() }
@@ -40,6 +44,9 @@ public func given<V: View>(
 
   guard observation.missingInjectionKeys.isEmpty
   else { throw GivenError.missingInjection(keys: observation.missingInjectionKeys) }
+
+  guard observation.missingCoreDataInjection == false
+  else { throw GivenError.missingCoreDataInjection }
 }
 
 // MARK: - Private NotificationCenter Helper
@@ -50,13 +57,20 @@ private struct InjectionNotificationObservation {
     self._missingInjectionKeys()
   }
 
+  private let _missingCoreDataInjection: () -> Bool
+  var missingCoreDataInjection: Bool {
+    _missingCoreDataInjection()
+  }
+
   let unregisterNotifications: () -> Void
 
   init(
     missingInjectionKeys: @escaping () -> [String],
+    missingCoreDataInjection: @escaping () -> Bool,
     unregisterNotifications: @escaping () -> Void
   ) {
     self._missingInjectionKeys = missingInjectionKeys
+    self._missingCoreDataInjection = missingCoreDataInjection
     self.unregisterNotifications = unregisterNotifications
   }
 }
@@ -64,6 +78,9 @@ private struct InjectionNotificationObservation {
 private func startObservingMissingInjectionNotifications() -> InjectionNotificationObservation {
   @ThreadSafe
   var missingInjectionKeys: [String] = []
+
+  @ThreadSafe
+  var missingCoreDataInjection = false
 
   let injectionToken = NotificationCenter.default
     .addObserver(
@@ -76,9 +93,21 @@ private func startObservingMissingInjectionNotifications() -> InjectionNotificat
       )
   }
 
+  let coreDataToken = NotificationCenter.default
+    .addObserver(
+      forName: .swiftUITestSupportMissingCoreDataInjection,
+      object: nil,
+      queue: nil
+    ) { [_missingCoreDataInjection] _ in
+      _missingCoreDataInjection.wrappedValue = true
+  }
+
   return InjectionNotificationObservation {
     _missingInjectionKeys.wrappedValue
+  } missingCoreDataInjection: {
+    _missingCoreDataInjection.wrappedValue
   } unregisterNotifications: {
     NotificationCenter.default.removeObserver(injectionToken)
+    NotificationCenter.default.removeObserver(coreDataToken)
   }
 }
