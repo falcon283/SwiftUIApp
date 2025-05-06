@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -247,7 +248,7 @@ internal import SwiftAppUtilities
   /// - Parameter thunk: An initial value for the state object.
   public init(wrappedValue thunk: @autoclosure @escaping () -> ObjectType) {
     self.storage = SwiftUI.StateObject(wrappedValue: thunk())
-    self.testValue = .unDispatched(thunk)
+    self._testValue = ThreadSafe(.unDispatched(thunk))
   }
 
   /// The underlying value referenced by the state object.
@@ -264,13 +265,13 @@ internal import SwiftAppUtilities
   ///         Text(contact.name) // Reads name from contact's wrapped value.
   ///     }
   /// ```
-  ///
+  /// 
   /// When you change a wrapped value, you can access the new
   /// value immediately. However, SwiftUI updates views that display the value
   /// asynchronously, so the interface might not update immediately.
   @MainActor @preconcurrency public var wrappedValue: ObjectType {
     if TestSupport.isRunningUnitTest {
-      return self.testValue.object
+      return self.$testValue.perform { $0.object }
     } else {
       return self.storage.wrappedValue
     }
@@ -280,3 +281,4 @@ internal import SwiftAppUtilities
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension StateObject : Sendable {
 }
+#endif

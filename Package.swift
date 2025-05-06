@@ -4,39 +4,104 @@
 import Foundation
 import PackageDescription
 
+// MARK: Configurations
+
 let testSupportEnabled = ProcessInfo().environment["SWIFTUIAPP_TEST_SUPPORT"] == "TRUE"
 
 let canTestSwiftUISettings: [SwiftSetting]? = !testSupportEnabled ? nil : [
   .define("canTestSwiftUI", .when(configuration: .debug))
 ]
 
-let packageConfiguration: (products: [Product], targets: [Target]) = {
-  (
-    [
-      .library(name: "SwiftUIApp", targets: ["SwiftUIApp"]),
-      .library(name: "SwiftAppUtilities", targets: ["SwiftAppUtilities"]),
-      .library(name: "SwiftUITestSupport", targets: ["SwiftUITestSupport"]),
-    ],
-    [
-      .target(name: "SwiftUIApp", dependencies: ["SwiftAppUtilities", "SwiftUITestSupport"], swiftSettings: canTestSwiftUISettings),
-      .testTarget(name: "SwiftUIAppTests", dependencies: ["SwiftUIApp"], swiftSettings: canTestSwiftUISettings),
+// MARK: - Modules Definition
 
-      .target(name: "SwiftAppUtilities"),
-      .testTarget(name: "SwiftAppUtilitiesTests", dependencies: ["SwiftAppUtilities"]),
+enum Module: String, CaseIterable {
+  case swiftUIApp = "SwiftUIApp"
+  case swiftUITestSupport = "SwiftUITestSupport"
+  case swiftAppUtilities = "SwiftAppUtilities"
+}
 
-      .target(name: "SwiftUITestSupport", dependencies: ["SwiftAppUtilities"]),
-      .testTarget(
-        name: "SwiftUITestSupportTests",
-        dependencies: ["SwiftUITestSupport"],
-        resources: [.process("CoreData/TestModel.xcdatamodeld")]
-      )
-    ]
-  )
-}()
+// MARK: - Package Definition
 
 let package = Package(
   name: "SwiftUIApp",
   platforms: [.iOS(.v13), .watchOS(.v6), .tvOS(.v13), .visionOS(.v1), .macCatalyst(.v13), .macOS(.v10_15)],
-  products: packageConfiguration.products,
-  targets: packageConfiguration.targets
+  products: Module.allCases.map(\.product),
+  targets: Module.allCases.map(\.targets).flatMap { $0 }
 )
+
+// MARK: - Modules Implementations
+
+extension Module {
+
+  var libraryName: String {
+    self.rawValue
+  }
+
+  var targetName: String {
+    self.libraryName
+  }
+
+  var targetDependency: Target.Dependency {
+    .init(stringLiteral: self.targetName)
+  }
+
+  var testTargetName: String {
+    return self.targetName + "Tests"
+  }
+}
+
+extension Module {
+
+  var product: Product {
+    switch self {
+    case .swiftUIApp:
+      return .library(name: Module.swiftUIApp.libraryName, targets: [Module.swiftUIApp.targetName])
+    case .swiftUITestSupport:
+      return .library(name: Module.swiftUITestSupport.libraryName, targets: [Module.swiftUITestSupport.targetName])
+    case .swiftAppUtilities:
+      return .library(name: Module.swiftAppUtilities.libraryName, targets: [Module.swiftAppUtilities.targetName])
+    }
+  }
+
+  var targets: [Target] {
+    switch self {
+    case .swiftUIApp:
+      return [
+        .target(
+          name: Module.swiftUIApp.targetName,
+          dependencies: [Module.swiftAppUtilities, Module.swiftUITestSupport].map(\.targetDependency),
+          swiftSettings: canTestSwiftUISettings
+        ),
+        .testTarget(
+          name: Module.swiftUIApp.testTargetName,
+          dependencies: [Module.swiftUIApp.targetDependency],
+          swiftSettings: canTestSwiftUISettings
+        )
+      ]
+
+    case .swiftUITestSupport:
+      return [
+        .target(
+          name: Module.swiftUITestSupport.targetName,
+          dependencies: [Module.swiftAppUtilities.targetDependency],
+          swiftSettings: canTestSwiftUISettings
+        ),
+        .testTarget(
+          name: Module.swiftUITestSupport.testTargetName,
+          dependencies: [Module.swiftUITestSupport.targetDependency],
+          resources: [.process("CoreData/TestModel.xcdatamodeld")],
+          swiftSettings: canTestSwiftUISettings
+        )
+      ]
+
+    case .swiftAppUtilities:
+      return [
+        .target(name: Module.swiftAppUtilities.targetName),
+        .testTarget(
+          name: Module.swiftAppUtilities.testTargetName,
+          dependencies: [Module.swiftAppUtilities.targetDependency]
+        )
+      ]
+    }
+  }
+}

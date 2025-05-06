@@ -165,11 +165,13 @@ extension CoreDataTests.SectionedFetchRequestTests {
 
 // MARK: - Test Objects
 
+#if canTestSwiftUI
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private typealias SectionedFetchRequest = SwiftUITestSupport.SectionedFetchRequest
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private typealias SectionedFetchResults = SwiftUITestSupport.SectionedFetchResults
+#endif
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private struct TestView: View {

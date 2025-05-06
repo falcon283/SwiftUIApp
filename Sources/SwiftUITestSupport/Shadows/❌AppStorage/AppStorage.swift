@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -32,7 +33,7 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = .updatedValue(newValue)
+        self.$testValue.assign(.updatedValue(newValue))
       } else {
         self.storage.wrappedValue = newValue
       }
@@ -61,7 +62,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init<RowValue>(wrappedValue: Value = TableColumnCustomization<RowValue>(), _ key: String, store: UserDefaults? = nil) where Value == TableColumnCustomization<RowValue>, RowValue : Identifiable {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -83,7 +84,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == Bool {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -98,7 +99,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == Int {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -113,7 +114,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == Double {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -128,7 +129,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == String {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -143,7 +144,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == URL {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -159,7 +160,7 @@ extension AppStorage {
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == Date {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -179,7 +180,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value == Data {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -209,7 +210,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value : RawRepresentable, Value.RawValue == Int {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -239,7 +240,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value, _ key: String, store: UserDefaults? = nil) where Value : RawRepresentable, Value.RawValue == String {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -259,7 +260,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == Bool? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -275,7 +276,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == Int? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -291,7 +292,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == Double? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -307,7 +308,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == String? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -323,7 +324,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == URL? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -340,7 +341,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   public init(_ key: String, store: UserDefaults? = nil) where Value == Date? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -356,7 +357,7 @@ extension AppStorage where Value : ExpressibleByNilLiteral {
   ///     of `nil` will use the user default store from the environment.
   public init(_ key: String, store: UserDefaults? = nil) where Value == Data? {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -390,7 +391,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init<R>(_ key: String, store: UserDefaults? = nil) where Value == R?, R : RawRepresentable, R.RawValue == String {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -412,7 +413,7 @@ extension AppStorage {
   ///         var body: some View { ... }
   ///     }
   /// ```
-  ///
+  /// 
   /// - Parameters:
   ///   - key: The key to read and write the value to in the user defaults
   ///     store.
@@ -420,7 +421,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init<R>(_ key: String, store: UserDefaults? = nil) where Value == R?, R : RawRepresentable, R.RawValue == Int {
     self.storage = SwiftUI.AppStorage(key, store: store)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -439,7 +440,7 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value = ToolbarLabelStyle.automatic, _ key: String, store: UserDefaults? = nil) where Value == ToolbarLabelStyle {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -463,7 +464,8 @@ extension AppStorage {
   ///     of `nil` will use the user default store from the environment.
   public init(wrappedValue: Value = TabViewCustomization(), _ key: String, store: UserDefaults? = nil) where Value == TabViewCustomization {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
+#endif

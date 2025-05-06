@@ -10,13 +10,13 @@ struct EnvironmentObjectTest {
   func Given_EnvironmentObject_When_Created_Then_HasDefaultValue() async throws {
 
     try await given(TestView()) { sut in
-      // Commented it's expected to crash if not injected.
+      // Commented, it's expected to crash if not injected.
       // #expect(sut.observableObject.value == 0)
     }
   }
 
   @Test
-  func Given_EnvironmentObject_When_Injected_Then_UpdatedValueCanBeRead() async throws {
+  func Given_EnvironmentObject_When_Updated_Then_UpdatedValueCanBeRead() async throws {
     try await given(TestView()) {
       $0.environmentObject(TestObservableObject(value: 1))
     } expect: { sut in
@@ -27,7 +27,13 @@ struct EnvironmentObjectTest {
 
 // MARK: - Test Objects
 
+#if canTestSwiftUI
 private typealias EnvironmentObject = SwiftUITestSupport.EnvironmentObject
+#endif
+
+private extension EnvironmentValues {
+  @Entry var myCustomValue = "test"
+}
 
 private final class TestObservableObject: ObservableObject {
 

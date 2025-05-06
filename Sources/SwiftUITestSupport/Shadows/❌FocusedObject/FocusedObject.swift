@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 private import SwiftAppUtilities
 
@@ -34,3 +35,4 @@ private import SwiftAppUtilities
     self.retrievalKey = TestSupport.focusedObjectKey(for: ObjectType.self)
   }
 }
+#endif

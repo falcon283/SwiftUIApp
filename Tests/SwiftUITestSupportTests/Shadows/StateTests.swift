@@ -30,7 +30,9 @@ struct StateTests {
 
 // MARK: - Test Objects
 
+#if canTestSwiftUI
 private typealias State = SwiftUITestSupport.State
+#endif
 
 private struct TestView: View {
 

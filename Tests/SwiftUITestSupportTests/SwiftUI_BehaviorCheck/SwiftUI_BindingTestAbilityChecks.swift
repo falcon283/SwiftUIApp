@@ -12,7 +12,7 @@ private struct TestView: View {
 
 // ✅ @Binding is Testable.
 // Also we don't need to Shadow since SwiftUIApp is banning Vanilla SwiftUI Bindings so to centralize the Business logic
-// using UIFeature derived Binding.
+// using ViewModelFeature derived Binding.
 
 extension SwiftUIBehaviour {
 
@@ -27,7 +27,12 @@ extension SwiftUIBehaviour.SwiftUI_BindingTestAbilityChecks {
   func Given_AnBindingInAView_When_ValueIsChanged_Then_UpdatedValueCanBeReadBack() async {
 
     let threadSafe = ThreadSafe(false)
-    let sut = TestView(binding: Binding(get: { threadSafe.wrappedValue }, set: { threadSafe.wrappedValue = $0 }))
+    let sut = TestView(
+      binding: Binding(
+        get: { threadSafe.wrappedValue },
+        set: { threadSafe.projectedValue.assign($0) }
+      )
+    )
 
     #expect(sut.binding == false)
     sut.binding = true

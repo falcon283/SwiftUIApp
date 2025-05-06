@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -301,7 +302,7 @@ internal import SwiftAppUtilities
   ///   property.
   public init(wrappedValue value: Value) {
     self.storage = SwiftUI.State(wrappedValue: value)
-    self.testValue = value
+    self._testValue = ThreadSafe(value)
   }
 
   /// Creates a state property that stores an initial value.
@@ -344,7 +345,7 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = newValue
+        self.$testValue.assign(newValue)
       } else {
         self.storage.wrappedValue = newValue
       }
@@ -365,6 +366,7 @@ extension State where Value : ExpressibleByNilLiteral {
   /// with an input of `nil`. See that initializer for more information.
   public init() {
     self.storage = SwiftUI.State()
-    self.testValue = nil
+    self._testValue = ThreadSafe(nil)
   }
 }
+#endif

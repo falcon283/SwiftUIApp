@@ -94,8 +94,7 @@ extension Given_ViewFeature {
       let id = UUID()
       sut.notify(.waiting(milliseconds: 1), storeIn: bag, withId: id)
 
-      await wait(expecting: sut.value == 11)
-      #expect(sut.value == 11)
+      #expect(await waiting(sut.value == 11))
     }
   }
 
@@ -112,8 +111,7 @@ extension Given_ViewFeature {
       sut.notify(.waiting(milliseconds: 15), storeIn: bag, withId: id)
       sut.notify(.waiting(milliseconds: 20), storeIn: bag, withId: id)
 
-      await wait(expecting: sut.value == 11)
-      #expect(sut.value == 11)
+      #expect(await waiting(sut.value == 11))
     }
   }
 
@@ -130,8 +128,7 @@ extension Given_ViewFeature {
       sut.notify(.waiting(milliseconds: 1), storeIn: bag, withId: id)
       bag = nil
 
-      await wait(expecting: sut.value == 10)
-      #expect(sut.value == 10)
+      #expect(await waiting(sut.value == 10))
     }
   }
 }

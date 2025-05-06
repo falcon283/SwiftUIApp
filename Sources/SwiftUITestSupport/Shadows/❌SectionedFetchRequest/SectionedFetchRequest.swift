@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import CoreData
 public import SwiftUI
 private import SwiftAppUtilities
@@ -129,7 +130,7 @@ extension SectionedFetchRequest : @preconcurrency DynamicProperty {
   /// ``View/body-swift.property`` to ensure the view has the most recent
   /// fetched results.
   @MainActor public func update() {
-    self.results = SectionedFetchResults(results: self.storage.wrappedValue)
+    self.$results.assign(SectionedFetchResults(results: self.storage.wrappedValue))
     self.storage.update()
   }
 }
@@ -346,7 +347,7 @@ private extension SectionedFetchRequest {
           fetchRequest: self.buildFetchRequest(),
           sectionIdentifier: self.sectionIdentifier
         )
-        self.results = results
+        self.$results.assign(results)
         return results
       }
 
@@ -354,7 +355,8 @@ private extension SectionedFetchRequest {
     }
 
     let results = SectionedFetchResults(results: self.storage.wrappedValue)
-    self.results = results
+    self.$results.assign(results)
     return results
   }
 }
+#endif

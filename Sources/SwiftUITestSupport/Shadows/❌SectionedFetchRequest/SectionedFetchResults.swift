@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import CoreData
 internal import SwiftUI
 private import SwiftAppUtilities
@@ -277,10 +278,12 @@ private import SwiftAppUtilities
         results.nsSortDescriptors = newValue
 
       case let .test(context, fetchRequest, unSectionedSortDescriptors, sectionIdentifier, results):
-        unSectionedSortDescriptors.wrappedValue = newValue
+        unSectionedSortDescriptors.projectedValue.assign(newValue)
         let ascending = unSectionedSortDescriptors.wrappedValue.first?.ascending ?? true
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: sectionIdentifier.wrappedValue, ascending: ascending)] + newValue
-        results.wrappedValue = Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        results.projectedValue.assign(
+          Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        )
       }
     }
   }
@@ -307,7 +310,9 @@ private import SwiftAppUtilities
 
       case let .test(context, fetchRequest, _, sectionIdentifier, results):
         fetchRequest.predicate = newValue
-        results.wrappedValue = Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        results.projectedValue.assign(
+          Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        )
       }
     }
   }
@@ -335,10 +340,12 @@ private import SwiftAppUtilities
         results.sectionIdentifier = newValue
 
       case let .test(context, fetchRequest, unSectionedSortDescriptors, sectionIdentifier, results):
-        sectionIdentifier.wrappedValue = newValue
+        sectionIdentifier.projectedValue.assign(newValue)
         let ascending = unSectionedSortDescriptors.wrappedValue.first?.ascending ?? true
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: newValue, ascending: ascending)] + unSectionedSortDescriptors.wrappedValue
-        results.wrappedValue = Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        results.projectedValue.assign(
+          Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        )
       }
     }
   }
@@ -446,10 +453,12 @@ extension SectionedFetchResults where Result : NSManagedObject {
 
       case let .test(context, fetchRequest, unSectionedSortDescriptors, sectionIdentifier, results):
         let newValue = newValue.map { NSSortDescriptor($0) }
-        unSectionedSortDescriptors.wrappedValue = newValue
+        unSectionedSortDescriptors.projectedValue.assign(newValue)
         let ascending = unSectionedSortDescriptors.wrappedValue.first?.ascending ?? true
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: sectionIdentifier.wrappedValue, ascending: ascending)] + newValue
-        results.wrappedValue = Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        results.projectedValue.assign(
+          Self.mapSection(by: sectionIdentifier.wrappedValue, fetchRequest: fetchRequest, context: context)
+        )
       }
     }
   }
@@ -481,3 +490,4 @@ private extension SectionedFetchResults {
     } ?? []
   }
 }
+#endif

@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 public import CoreData
 private import SwiftAppUtilities
@@ -96,7 +97,7 @@ private import SwiftAppUtilities
 
       case let .test(context, fetchRequest, results):
         fetchRequest.sortDescriptors = newValue
-        results.wrappedValue = (try? context.fetch(fetchRequest)) ?? []
+        results.projectedValue.assign((try? context.fetch(fetchRequest)) ?? [])
       }
     }
   }
@@ -123,7 +124,7 @@ private import SwiftAppUtilities
 
       case let .test(context, fetchRequest, results):
         fetchRequest.predicate = newValue
-        results.wrappedValue = (try? context.fetch(fetchRequest)) ?? []
+        results.projectedValue.assign((try? context.fetch(fetchRequest)) ?? [])
       }
     }
   }
@@ -231,7 +232,7 @@ extension FetchedResults where Result : NSManagedObject {
 
       case let .test(context, fetchRequest, results):
         fetchRequest.sortDescriptors = newValue.map { NSSortDescriptor($0) }
-        results.wrappedValue = (try? context.fetch(fetchRequest)) ?? []
+        results.projectedValue.assign((try? context.fetch(fetchRequest)) ?? [])
       }
     }
   }
@@ -240,3 +241,4 @@ extension FetchedResults where Result : NSManagedObject {
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension FetchedResults : Sendable {
 }
+#endif

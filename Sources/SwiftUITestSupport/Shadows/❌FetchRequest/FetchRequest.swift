@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import CoreData
 public import SwiftUI
 private import SwiftAppUtilities
@@ -112,7 +113,7 @@ extension FetchRequest : @preconcurrency DynamicProperty {
   /// `View/body-swift.property` to ensure the view has the most recent
   /// fetched results.
   @MainActor public mutating func update() {
-    self.results = FetchedResults(results: self.storage.wrappedValue)
+    self.$results.assign(FetchedResults(results: self.storage.wrappedValue))
     self.storage.update()
   }
 }
@@ -307,7 +308,7 @@ private extension FetchRequest {
     if TestSupport.isRunningUnitTest {
       if let container: NSPersistentContainer = TestSupport.getInjected(for: TestSupport.persistentContainerKey) {
         let results = FetchedResults(context: container.viewContext, fetchRequest: self.buildFetchRequest())
-        self.results = results
+        self.$results.assign(results)
         return results
       }
 
@@ -315,7 +316,8 @@ private extension FetchRequest {
     }
 
     let results = FetchedResults(results: self.storage.wrappedValue)
-    self.results = results
+    self.$results.assign(results)
     return results
   }
 }
+#endif

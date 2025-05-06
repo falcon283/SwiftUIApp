@@ -16,8 +16,8 @@ struct ViewFeatureBindingTest {
       #expect(!sut.paused)
 
       notifyBinding.wrappedValue = true
-      await wait(expecting: sut.paused)
-      #expect(sut.paused)
+
+      #expect(await waiting(sut.paused))
     }
   }
 
@@ -30,8 +30,8 @@ struct ViewFeatureBindingTest {
       #expect(!sut.paused)
 
       notifyBinding.wrappedValue = true
-      await wait(expecting: sut.paused)
-      #expect(sut.paused)
+
+      #expect(await waiting(sut.paused))
     }
   }
 }
@@ -46,7 +46,7 @@ private struct TestFeature: ViewFeature {
   var paused = false
 
   func notify(_ event: UIEvent) async {
-    self.paused = true
+    self.$paused.assign(true)
   }
 
   func body(with bag: CancellationBag) -> some View { EmptyView() }

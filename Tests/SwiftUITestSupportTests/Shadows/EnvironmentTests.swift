@@ -6,6 +6,7 @@ import SwiftUITestSupport
 @Suite
 struct EnvironmentTest {
 
+#if canTestSwiftUI
   @Test
   func Given_Environment_When_CreatedWithNoInjection_Then_ThrowAnError() async throws {
 
@@ -15,6 +16,7 @@ struct EnvironmentTest {
       }
     }
   }
+#endif
 
   @Test
   func Given_Environment_When_Updated_Then_UpdatedValueCanBeRead() async throws {
@@ -32,7 +34,7 @@ struct EnvironmentTest {
     try await given(TestObservableView()) { sut in
       #expect(sut.observableOptional == nil)
 
-      // Commented it's expected to crash if not injected.
+      // Commented, it's expected to crash if not injected.
       // #expect(sut.observable.value == 0)
     }
   }
@@ -51,7 +53,9 @@ struct EnvironmentTest {
 
 // MARK: - Test Objects
 
+#if canTestSwiftUI
 private typealias Environment = SwiftUITestSupport.Environment
+#endif
 
 private extension EnvironmentValues {
   @Entry var myCustomValue = "test"

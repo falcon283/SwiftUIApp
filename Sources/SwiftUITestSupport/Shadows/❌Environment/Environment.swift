@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 private import SwiftAppUtilities
 
@@ -294,3 +295,4 @@ extension Environment {
     self.retrievalKey = TestSupport.environmentKey(for: T.self)
   }
 }
+#endif

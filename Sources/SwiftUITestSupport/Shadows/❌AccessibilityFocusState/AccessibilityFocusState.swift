@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -77,7 +78,7 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = newValue
+        self.$testValue.assign(newValue)
       } else {
         self.storage.wrappedValue = newValue
       }
@@ -97,7 +98,7 @@ internal import SwiftAppUtilities
   /// Creates a new accessibility focus state for a Boolean value.
   public init() where Value == Bool {
     self.storage = SwiftUI.AccessibilityFocusState()
-    self.testValue = false
+    self._testValue = ThreadSafe(false)
   }
 
   /// Creates a new accessibility focus state for a Boolean value, using the accessibility
@@ -107,13 +108,13 @@ internal import SwiftAppUtilities
   ///   - technologies: One of the available `AccessibilityTechnologies`.
   public init(for technologies: AccessibilityTechnologies) where Value == Bool {
     self.storage = SwiftUI.AccessibilityFocusState(for: technologies)
-    self.testValue = false
+    self._testValue = ThreadSafe(false)
   }
 
   /// Creates a new accessibility focus state of the type you provide.
   public init<T>() where Value == T?, T : Hashable {
     self.storage = SwiftUI.AccessibilityFocusState()
-    self.testValue = nil
+    self._testValue = ThreadSafe(nil)
   }
 
   /// Creates a new accessibility focus state of the type and
@@ -123,9 +124,10 @@ internal import SwiftAppUtilities
   ///  `AccessibilityTechnologies`.
   public init<T>(for technologies: AccessibilityTechnologies) where Value == T?, T : Hashable {
     self.storage = SwiftUI.AccessibilityFocusState(for: technologies)
-    self.testValue = nil
+    self._testValue = ThreadSafe(nil)
   }
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 extension AccessibilityFocusState : Sendable where Value : Sendable { }
+#endif

@@ -1,6 +1,6 @@
 public import SwiftUI
 
-public extension ViewFeature {
+public extension ViewModelFeature {
 
   func bind<Value>(
     _ getValue: @escaping (Self) -> Value,

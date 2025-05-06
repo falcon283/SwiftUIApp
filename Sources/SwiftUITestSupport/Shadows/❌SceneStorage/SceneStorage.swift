@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -59,7 +60,7 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = .updatedValue(newValue)
+        self.$testValue.assign(.updatedValue(newValue))
       } else {
         self.storage.wrappedValue = newValue
       }
@@ -79,7 +80,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init<RowValue>(wrappedValue: Value = TableColumnCustomization<RowValue>(), _ key: String) where Value == TableColumnCustomization<RowValue>, RowValue : Identifiable {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -98,7 +99,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == Bool {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -109,7 +110,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == Int {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -120,7 +121,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == Double {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -131,7 +132,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == String {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -142,7 +143,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == URL {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -154,7 +155,7 @@ extension SceneStorage {
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   public init(wrappedValue: Value, _ key: String) where Value == Date {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -168,7 +169,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value == Data {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -194,7 +195,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value : RawRepresentable, Value.RawValue == Int {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -220,7 +221,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value, _ key: String) where Value : RawRepresentable, Value.RawValue == String {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -235,7 +236,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == Bool? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -246,7 +247,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == Int? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -257,7 +258,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == Double? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -268,7 +269,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == String? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -279,7 +280,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == URL? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -291,7 +292,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   public init(_ key: String) where Value == Date? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -302,7 +303,7 @@ extension SceneStorage where Value : ExpressibleByNilLiteral {
   /// - Parameter key: a key used to save and restore the value.
   public init(_ key: String) where Value == Data? {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -332,7 +333,7 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init<R>(_ key: String) where Value == R?, R : RawRepresentable, R.RawValue == String {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 
@@ -354,11 +355,11 @@ extension SceneStorage {
   ///         var body: some View { ... }
   ///     }
   /// ```
-  ///
+  /// 
   /// - Parameter key: a key used to save and restore the value.
   public init<R>(_ key: String) where Value == R?, R : RawRepresentable, R.RawValue == Int {
     self.storage = SwiftUI.SceneStorage(key)
-    self.testValue = .defaultValue(nil)
+    self._testValue = ThreadSafe(.defaultValue(nil))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
@@ -382,7 +383,8 @@ extension SceneStorage {
   /// - Parameter key: a key used to save and restore the value.
   public init(wrappedValue: Value = TabViewCustomization(), _ key: String, store: UserDefaults? = nil) where Value == TabViewCustomization {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key, store: store)
-    self.testValue = .defaultValue(wrappedValue)
+    self._testValue = ThreadSafe(.defaultValue(wrappedValue))
     self.retrievalKey = TestSupport.storageKey(for: key)
   }
 }
+#endif

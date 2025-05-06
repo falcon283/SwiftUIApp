@@ -1,6 +1,6 @@
 private import Foundation
 
-public extension ViewFeature {
+public extension ViewModelFeature {
 
   func notify(_ event: UIEvent, storeIn bag: CancellationBag, withId cancellationId: AnyHashable? = nil) {
     let id = cancellationId ?? Self.cancellationId(for: event)
@@ -14,7 +14,7 @@ public extension ViewFeature {
   }
 }
 
-extension ViewFeature {
+extension ViewModelFeature {
 
   static func cancellationId(for event: UIEvent) -> AnyHashable {
     (event as? any Identifiable).map { self.extractIdentifiableId(for: $0) } ??
@@ -27,7 +27,7 @@ extension ViewFeature {
   }
 }
 
-extension ViewFeature {
+extension ViewModelFeature {
 
   static func eventDescription(for event: UIEvent) -> String? {
     _eventDescription(for: event, useParenthesisForSimpleType: false)

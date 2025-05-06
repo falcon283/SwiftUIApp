@@ -148,8 +148,10 @@ extension CoreDataTests.FetchRequestTests {
 
 // MARK: - Test Objects
 
+#if canTestSwiftUI
 private typealias FetchRequest = SwiftUITestSupport.FetchRequest
 private typealias FetchedResults = SwiftUITestSupport.FetchedResults
+#endif
 
 private struct TestView: View {
 

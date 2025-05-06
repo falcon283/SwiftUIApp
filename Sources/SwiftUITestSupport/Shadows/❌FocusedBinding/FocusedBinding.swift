@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 import SwiftUI
 internal import SwiftAppUtilities
 
@@ -33,10 +34,11 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = newValue
+        self.$testValue.assign(newValue)
       } else {
         self.storage.wrappedValue = newValue
       }
     }
   }
 }
+#endif

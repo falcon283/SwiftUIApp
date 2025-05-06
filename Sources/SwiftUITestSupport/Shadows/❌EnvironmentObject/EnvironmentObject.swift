@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 private import SwiftAppUtilities
 
@@ -54,3 +55,4 @@ private import SwiftAppUtilities
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension EnvironmentObject : Sendable {}
+#endif

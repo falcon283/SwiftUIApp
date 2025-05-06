@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 internal import SwiftAppUtilities
 
@@ -125,7 +126,7 @@ internal import SwiftAppUtilities
     }
     nonmutating set {
       if TestSupport.isRunningUnitTest {
-        self.testValue = newValue
+        self.$testValue.assign(newValue)
       } else {
         self.storage.wrappedValue = newValue
       }
@@ -167,12 +168,13 @@ internal import SwiftAppUtilities
   /// Creates a focus state that binds to a Boolean.
   public init() where Value == Bool {
     self.storage = SwiftUI.FocusState()
-    self.testValue = false
+    self._testValue = ThreadSafe(false)
   }
 
   /// Creates a focus state that binds to an optional type.
   public init<T>() where Value == T?, T : Hashable {
     self.storage = SwiftUI.FocusState()
-    self.testValue = nil
+    self._testValue = ThreadSafe(nil)
   }
 }
+#endif

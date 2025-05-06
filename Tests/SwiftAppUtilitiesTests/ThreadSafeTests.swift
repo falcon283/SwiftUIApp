@@ -24,7 +24,7 @@ extension Given_AThreadSafe {
 
     await withTaskGroup(of: Void.self) { group in
       for _ in 0..<10000 {
-        group.addTask { threadSafe.wrappedValue = .random(in: Int.min...Int.max) }
+        group.addTask { threadSafe.projectedValue.assign(.random(in: Int.min...Int.max)) }
       }
     }
   }
@@ -37,7 +37,7 @@ extension Given_AThreadSafe {
       for _ in 0..<10000 {
         group.addTask {
           withExtendedLifetime(threadSafe.wrappedValue) { }
-          threadSafe.wrappedValue = .random(in: Int.min...Int.max)
+          threadSafe.projectedValue.assign(.random(in: Int.min...Int.max))
         }
       }
     }
@@ -50,7 +50,7 @@ extension Given_AThreadSafe {
 
     #expect(threadSafe1 == threadSafe2)
 
-    threadSafe2.wrappedValue = 20
+    threadSafe2.projectedValue.assign(20)
 
     #expect(threadSafe1 != threadSafe2)
   }
@@ -67,7 +67,7 @@ extension Given_AThreadSafe {
 
     #expect(threadSafe1.id == threadSafe2.id)
 
-    threadSafe2.wrappedValue = TestValue(id: 20)
+    threadSafe2.projectedValue.assign(TestValue(id: 20))
 
     #expect(threadSafe1.id != threadSafe2.id)
   }
@@ -79,12 +79,14 @@ extension Given_AThreadSafe {
       let id: Int
     }
 
-    let threadSafe1 = ThreadSafe(TestValue(id: 10))
-    let threadSafe2 = ThreadSafe(TestValue(id: 10))
+    @ThreadSafe
+    var threadSafe1 = TestValue(id: 10)
+    @ThreadSafe
+    var threadSafe2 = TestValue(id: 10)
 
     #expect(threadSafe1.hashValue == threadSafe2.hashValue)
 
-    threadSafe2.wrappedValue = TestValue(id: 20)
+    $threadSafe2.assign(TestValue(id: 20))
 
     #expect(threadSafe1.hashValue != threadSafe2.hashValue)
   }

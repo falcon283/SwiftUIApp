@@ -1,4 +1,5 @@
 public import SwiftUI
+private import OSLog
 private import SwiftAppUtilities
 
 private enum GivenError: Error, CustomDebugStringConvertible {
@@ -16,22 +17,14 @@ private enum GivenError: Error, CustomDebugStringConvertible {
   }
 }
 
-/// An Helper function designed for Unit Testing execution.
-///
-/// When you a UIFeature is meant to be Unit Tested, It's required to execute the test code wrapped into a ``given(_:withDependencies:expect:)`` call.
-///
-/// - Parameters:
-///   - sut: The System Under Test.
-///   - injectDependencies: The Injector object you can use to alter the dependencies.
-///   - expect: The actual test to run.
-/// - Throws: Throws an error if the given expect function throws an error.
 @MainActor
 public func given<V: View>(
   _ sut: @autoclosure () -> V,
   withDependencies injectDependencies: (inout Injector) async throws -> Void = { _ in },
-  expect: (V) async throws -> Void
+  expect: @MainActor (V) async throws -> Void
 ) async throws {
 
+#if canTestSwiftUI
   var injector = Injector()
   try await injectDependencies(&injector)
 
@@ -47,6 +40,19 @@ public func given<V: View>(
 
   guard observation.missingCoreDataInjection == false
   else { throw GivenError.missingCoreDataInjection }
+#else
+  if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+    Logger(subsystem: "SwiftUITestSupport", category: "Given")
+      .debug("⚠️ SwiftUITestSupport is disabled. Given expect closure call has been suppressed.")
+  } else {
+    os_log(
+      .debug,
+      log: OSLog(subsystem: "SwiftUITestSupport", category: "Given"),
+      "⚠️ SwiftUITestSupport is disabled. Given expect closure call has been suppressed."
+    )
+  }
+  return
+#endif
 }
 
 // MARK: - Private NotificationCenter Helper
@@ -87,10 +93,12 @@ private func startObservingMissingInjectionNotifications() -> InjectionNotificat
       forName: .swiftUITestSupportMissingInjection,
       object: nil,
       queue: nil
-    ) { [_missingInjectionKeys] notification in
-      _missingInjectionKeys.wrappedValue.append(
-        notification.userInfo?[Notification.swiftUITestSupportMissingInjectionKeyDescription] as? String ?? "Unknown Key"
-      )
+    ) { [criticalSection = $missingInjectionKeys] notification in
+      criticalSection.perform {
+        $0.append(
+          notification.userInfo?[Notification.swiftUITestSupportMissingInjectionKeyDescription] as? String ?? "Unknown Key"
+        )
+      }
   }
 
   let coreDataToken = NotificationCenter.default
@@ -98,8 +106,8 @@ private func startObservingMissingInjectionNotifications() -> InjectionNotificat
       forName: .swiftUITestSupportMissingCoreDataInjection,
       object: nil,
       queue: nil
-    ) { [_missingCoreDataInjection] _ in
-      _missingCoreDataInjection.wrappedValue = true
+    ) { [criticalSection = $missingCoreDataInjection] _ in
+      criticalSection.assign(true)
   }
 
   return InjectionNotificationObservation {

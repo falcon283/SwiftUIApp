@@ -1,3 +1,4 @@
+#if canTestSwiftUI
 public import SwiftUI
 private import SwiftAppUtilities
 
@@ -54,3 +55,4 @@ extension FocusedValue {
     self.retrievalKey = TestSupport.focusedValueKey(for: Value.self)
   }
 }
+#endif
