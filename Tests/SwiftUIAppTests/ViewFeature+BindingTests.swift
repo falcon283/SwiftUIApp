@@ -1,7 +1,7 @@
 import Testing
-import SwiftUIApp
 import SwiftUITestSupport
 import SwiftAppUtilities
+@testable import SwiftUIApp
 
 @MainActor
 @Suite
@@ -10,8 +10,8 @@ struct ViewFeatureBindingTest {
   @Test
   func Given_DerivedBinding_When_UpdatingTheBinding_Then_NotifyIsCalledAndStateIsChanged() async throws {
 
-    try await given(TestFeature()) { sut in
-      let notifyBinding = sut.bind(\.paused, onChangeNotify: .pause)
+    try await given(TestFeature()) { sut, bag in
+      let notifyBinding = sut.bind(\.paused, storeIn: bag, onChangeNotify: .pause)
 
       #expect(!sut.paused)
 
@@ -24,8 +24,8 @@ struct ViewFeatureBindingTest {
   @Test
   func Given_DerivedBindingWithClosure_When_UpdatingTheBinding_Then_NotifyIsCalledAndStateIsChanged() async throws {
 
-    try await given(TestFeature()) { sut in
-      let notifyBinding = sut.bind(\.paused) { _ in .pause }
+    try await given(TestFeature()) { sut, bag in
+      let notifyBinding = sut.bind(\.paused, storeIn: bag) { _ in .pause }
 
       #expect(!sut.paused)
 
@@ -49,5 +49,5 @@ private struct TestFeature: ViewFeature {
     self.paused = true
   }
 
-  var body: some View { EmptyView() }
+  func body(with bag: CancellationBag) -> some View { EmptyView() }
 }

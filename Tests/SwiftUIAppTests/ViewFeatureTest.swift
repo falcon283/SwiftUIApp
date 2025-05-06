@@ -36,9 +36,7 @@ struct Given_ViewFeature {
       }
     }
 
-    var body: some View {
-      EmptyView()
-    }
+    func body(with bag: CancellationBag) -> some View { EmptyView() }
   }
 }
 
@@ -57,10 +55,10 @@ extension Given_ViewFeature {
   @Test
   func When_BindValueIsSet_Then_BusinessLogicIsExecuted() async throws {
 
-    try await given(TestViewFeature()) { sut in
+    try await given(TestViewFeature()) { sut, bag in
       #expect(sut.text == "Test")
 
-      let binding = sut.bind(\.text, onChangeNotify: .updateValue)
+      let binding = sut.bind(\.text, storeIn: bag, onChangeNotify: .updateValue)
       binding.wrappedValue = "Changed"
 
       // The binding triggers the send which is asynchronous
@@ -73,16 +71,67 @@ extension Given_ViewFeature {
   @Test
   func When_BindFunctionValueIsSet_Then_BusinessLogicIsExecuted() async throws {
 
-    try await given(TestViewFeature()) { sut in
+    try await given(TestViewFeature()) { sut, bag in
       #expect(sut.text == "Test")
 
-      let binding = sut.bind(\.text, onChangeNotify: TestViewFeature.UIEvent.text)
+      let binding = sut.bind(\.text, storeIn: bag, onChangeNotify: TestViewFeature.UIEvent.text)
       binding.wrappedValue = "Changed"
 
       // The binding triggers the send which is asynchronous
       try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
 
       #expect(sut.text == "Changed")
+    }
+  }
+
+  @Test
+  func When_SynchronousNotifyIsUsed_Then_BusinessLogicIsExecuted() async throws {
+
+    try await given(TestViewFeature()) { sut, bag in
+
+      #expect(sut.value == 10)
+
+      let id = UUID()
+      sut.notify(.waiting(milliseconds: 1), storeIn: bag, withId: id)
+
+      await wait(expecting: sut.value == 11)
+      #expect(sut.value == 11)
+    }
+  }
+
+  @Test
+  func When_SynchronousNotifyIsUsedRepeatedTimesWithSameId_Then_PreviousTasksAreCanceledAndBusinessLogicIsExecutedOnce() async throws {
+
+    try await given(TestViewFeature()) { sut, bag in
+
+      #expect(sut.value == 10)
+
+      let id = UUID()
+      sut.notify(.waiting(milliseconds: 5), storeIn: bag, withId: id)
+      sut.notify(.waiting(milliseconds: 10), storeIn: bag, withId: id)
+      sut.notify(.waiting(milliseconds: 15), storeIn: bag, withId: id)
+      sut.notify(.waiting(milliseconds: 20), storeIn: bag, withId: id)
+
+      await wait(expecting: sut.value == 11)
+      #expect(sut.value == 11)
+    }
+  }
+
+  @Test
+  func When_CancellationBagGetsDestroyed_Then_RunningTaskGetsCanceled() async throws {
+
+    try await given(TestViewFeature()) { sut in
+
+      var bag: CancellationBag! = CancellationBag()
+
+      #expect(sut.value == 10)
+
+      let id = UUID()
+      sut.notify(.waiting(milliseconds: 1), storeIn: bag, withId: id)
+      bag = nil
+
+      await wait(expecting: sut.value == 10)
+      #expect(sut.value == 10)
     }
   }
 }
