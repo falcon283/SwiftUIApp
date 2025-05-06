@@ -17,6 +17,16 @@ private enum GivenError: Error, CustomDebugStringConvertible {
   }
 }
 
+/// An Helper function designed for Unit Testing execution.
+///
+/// When you have a `View` meant to be Unit Tested using the `SwiftUITestSupport` It's required to execute the test code wrapped
+/// into a ``given(_:withDependencies:expect:)`` call.
+///
+/// - Parameters:
+///   - sut: The System Under Test.
+///   - injectDependencies: The Injector object you can use to alter the dependencies.
+///   - expect: The actual test to run.
+/// - Throws: Throws an error if the given expect function throws an error.
 @MainActor
 public func given<V: View>(
   _ sut: @autoclosure () -> V,

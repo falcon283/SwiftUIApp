@@ -1,7 +1,15 @@
+/// A view owning a ``CancellationBag`` which is used to build a child view requiring a bag.
+///
+/// The main purpose of this view is to enable properly the ``ViewFeature`` implementations so to receive correctly a `ViewFeatureBag` derived from the parent.
+/// The `contentView` is a closure which receive the `CancellationBag` and produces a Content View.
+///
+/// - Note: If you are not using the ``ViewFeature`` protocol, then this view can be entirely ignored.
 public struct CancellationBagView<Content: View>: View {
 
   private let contentView: (CancellationBag) -> Content
 
+  /// Designated initializer
+  /// - Parameter contentView: The viewBuilder to construct the hosted view.
   init(@ViewBuilder contentView: @escaping (CancellationBag) -> Content) {
     self.contentView = contentView
   }

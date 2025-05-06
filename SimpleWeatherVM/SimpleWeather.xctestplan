@@ -1,0 +1,43 @@
+{
+  "configurations" : [
+    {
+      "id" : "1F33B9B1-F9A5-4AC4-8D3D-CE0259F69312",
+      "name" : "Test Scheme Action",
+      "options" : {
+        "environmentVariableEntries" : [
+          {
+            "key" : "isRunningUnitTests",
+            "value" : "true"
+          }
+        ]
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:SimpleWeather.xcodeproj",
+      "identifier" : "E4DE9AB22D80F456007FEBBA",
+      "name" : "SimpleWeather"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:SimpleWeather.xcodeproj",
+        "identifier" : "E4DE9AC22D80F457007FEBBA",
+        "name" : "SimpleWeatherTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:SimpleWeather.xcodeproj",
+        "identifier" : "E4DE9ACC2D80F457007FEBBA",
+        "name" : "SimpleWeatherUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
