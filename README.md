@@ -93,3 +93,7 @@ Do you want to know more about this project? Check out my articles:
 - [Making SwiftUI Testable 3/5 - Environment](https://medium.com/@gabrynet83/making-swiftui-testable-3-5-environment-ba84e1a0cf5d)
 - [Making SwiftUI Testable 4/5 - Storage](https://medium.com/@gabrynet83/making-swiftui-testable-4-5-storage-6e9f38c1f15a)
 - [Making SwiftUI Testable 5/5 - CoreData](https://medium.com/@gabrynet83/making-swiftui-testable-5-5-coredata-8ab075fce1d2)
+
+- [SwiftUI + ViewFeature 1/3 - Unidirectional Data Flow](https://medium.com/@gabrynet83/swiftui-viewfeature-1-3-unidirectional-data-flow-a59fcbfd2151)
+- [SwiftUI + ViewFeature 2/3 - Task Cancellation](https://medium.com/@gabrynet83/swiftui-viewfeature-2-3-task-cancellation-0e93bd91379f)
+- [SwiftUI + ViewFeature 3/3 - SwiftUIApp SPM](https://medium.com/@gabrynet83/swiftui-viewfeature-3-3-swiftuiapp-spm-7d0a51aa55ec)
