@@ -68,9 +68,7 @@ internal import SwiftAppUtilities
   }
 }
 
-@available(iOS 17.0, macOS 14.0, *)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension SceneStorage {
 
   /// Creates a property that can save and restore table column state.
@@ -78,6 +76,9 @@ extension SceneStorage {
   /// - Parameter wrappedValue: The default value if table column state is not
   ///   available for the given key.
   /// - Parameter key: a key used to save and restore the value.
+  @available(iOS 17.0, macOS 14.0, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   public init<RowValue>(wrappedValue: Value = TableColumnCustomization<RowValue>(), _ key: String) where Value == TableColumnCustomization<RowValue>, RowValue : Identifiable {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key)
     self._testValue = ThreadSafe(.defaultValue(wrappedValue))
@@ -364,9 +365,7 @@ extension SceneStorage {
   }
 }
 
-@available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension SceneStorage {
 
   /// Creates a property that can save and restore tab sidebar customizations.
@@ -381,6 +380,9 @@ extension SceneStorage {
   /// - Parameter wrappedValue: The default value if the customization
   ///   is not available for the given key.
   /// - Parameter key: a key used to save and restore the value.
+  @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   public init(wrappedValue: Value = TabViewCustomization(), _ key: String, store: UserDefaults? = nil) where Value == TabViewCustomization {
     self.storage = SwiftUI.SceneStorage(wrappedValue: wrappedValue, key, store: store)
     self._testValue = ThreadSafe(.defaultValue(wrappedValue))

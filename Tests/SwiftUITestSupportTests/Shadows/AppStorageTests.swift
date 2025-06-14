@@ -51,6 +51,7 @@ struct AppStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -61,6 +62,7 @@ struct AppStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .automatic)
     }
   }
+#endif
 
   // MARK: Injected Value
 
@@ -129,6 +131,7 @@ struct AppStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -144,6 +147,7 @@ struct AppStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .visible)
     }
   }
+#endif
 
   // MARK: - Modified Value
 
@@ -212,6 +216,7 @@ struct AppStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -224,6 +229,7 @@ struct AppStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .hidden)
     }
   }
+#endif
 }
 
 // MARK: - Test Objects
@@ -318,6 +324,7 @@ private struct TestViewSwiftUI: View {
   var body: some View { EmptyView() }
 }
 
+#if os(iOS) || os(macOS) || os(visionOS)
 @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -328,3 +335,4 @@ private struct TestTabViewCustomization: View {
 
   var body: some View { EmptyView() }
 }
+#endif

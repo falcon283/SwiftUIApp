@@ -245,7 +245,7 @@ public extension Injector {
 
     storeDescription.type = NSInMemoryStoreType
     storeDescription.shouldAddStoreAsynchronously = false
-    if #available(iOS 16.0, *) {
+    if #available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
       storeDescription.url = URL(filePath: "/dev/null")
     } else {
       storeDescription.url = URL(fileURLWithPath: "/dev/null")

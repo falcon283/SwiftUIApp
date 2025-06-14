@@ -40,6 +40,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS)
   @available(iOS 17.0, macOS 14.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -50,6 +51,7 @@ struct SceneStorageTests {
       #expect(sut.tableColumnCustomization[visibility: "test"] == .automatic)
     }
   }
+#endif
 
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   @Test
@@ -61,6 +63,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -71,6 +74,7 @@ struct SceneStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .automatic)
     }
   }
+#endif
 
   // MARK: - Injected
 
@@ -124,6 +128,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS)
   @available(iOS 17.0, macOS 14.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -139,6 +144,7 @@ struct SceneStorageTests {
       #expect(sut.tableColumnCustomization[visibility: "test"] == .visible)
     }
   }
+#endif
 
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   @Test
@@ -153,6 +159,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -168,6 +175,7 @@ struct SceneStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .visible)
     }
   }
+#endif
 
   // MARK: - Updated
 
@@ -221,6 +229,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS)
   @available(iOS 17.0, macOS 14.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -233,6 +242,7 @@ struct SceneStorageTests {
       #expect(sut.tableColumnCustomization[visibility: "test"] == .hidden)
     }
   }
+#endif
 
   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
   @Test
@@ -247,6 +257,7 @@ struct SceneStorageTests {
     }
   }
 
+#if os(iOS) || os(macOS) || os(visionOS)
   @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -259,6 +270,7 @@ struct SceneStorageTests {
       #expect(sut.tabViewCustomization[sidebarVisibility: "test"] == .hidden)
     }
   }
+#endif
 }
 
 // MARK: - Test Objects
@@ -338,6 +350,7 @@ private struct TestView15: View {
   var body: some View { EmptyView() }
 }
 
+#if os(iOS) || os(macOS)
 @available(iOS 17.0, macOS 14.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -348,6 +361,7 @@ private struct TestTableColumnCustomization: View {
 
   var body: some View { EmptyView() }
 }
+#endif
 
 @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
 private struct TestViewSwiftUI: View {
@@ -361,6 +375,7 @@ private struct TestViewSwiftUI: View {
   var body: some View { EmptyView() }
 }
 
+#if os(iOS) || os(macOS) || os(visionOS)
 @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -371,6 +386,7 @@ private struct TestTabViewCustomization: View {
 
   var body: some View { EmptyView() }
 }
+#endif
 
 private struct MyIdentifiable: Identifiable {
   var id: Int

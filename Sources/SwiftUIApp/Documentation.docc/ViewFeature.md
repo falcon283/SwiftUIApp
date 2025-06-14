@@ -10,12 +10,12 @@
 ### Sending Side Effects
 
 - ``ViewModelFeature/notify(_:)-2iw5n``
-- ``ViewModelFeature/notify(_:storeIn:withId:)``
+- ``ViewModelFeature/notify(_:with:storedIn:)``
 
 ### Sending Side Effects via Bindings
 
-- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-6ezr4``
-- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-4ktck``
+- ``ViewModelFeature/bind(_:cancellationId:storedIn:onChangeNotify:)-94kev``
+- ``ViewModelFeature/bind(_:cancellationId:storedIn:onChangeNotify:)-2aqli``
 
 ### Zero Effort Conformance
 

@@ -41,9 +41,7 @@ internal import SwiftAppUtilities
   }
 }
 
-@available(iOS 17.0, macOS 14.0, *)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension AppStorage {
 
   /// Creates a property that can save and restore table column state.
@@ -60,6 +58,9 @@ extension AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the environment.
+  @available(iOS 17.0, macOS 14.0, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   public init<RowValue>(wrappedValue: Value = TableColumnCustomization<RowValue>(), _ key: String, store: UserDefaults? = nil) where Value == TableColumnCustomization<RowValue>, RowValue : Identifiable {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
     self._testValue = ThreadSafe(.defaultValue(wrappedValue))
@@ -445,9 +446,7 @@ extension AppStorage {
   }
 }
 
-@available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension AppStorage {
 
   /// Creates a property that can save and restore tab sidebar customizations.
@@ -461,7 +460,10 @@ extension AppStorage {
   ///   - key: The key to read and write the value to in the user defaults
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
-  ///     of `nil` will use the user default store from the environment.
+  ///     of `nil` will use the user default store from the environment
+  @available(iOS 18.0, macOS 15.0, visionOS 2.0, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   public init(wrappedValue: Value = TabViewCustomization(), _ key: String, store: UserDefaults? = nil) where Value == TabViewCustomization {
     self.storage = SwiftUI.AppStorage(wrappedValue: wrappedValue, key, store: store)
     self._testValue = ThreadSafe(.defaultValue(wrappedValue))

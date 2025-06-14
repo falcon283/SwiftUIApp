@@ -1,0 +1,72 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+    types:
+        - labeled
+
+jobs:
+  build:
+
+    runs-on: macos-15
+    if: contains(github.event.pull_request.labels.*.name, 'Run Builds')
+    strategy:
+      matrix:
+        config: [debug, release]
+        destination: 
+          # iOS
+          - 'platform=iOS Simulator,name=iPhone 16 Pro'
+          - 'generic/platform=iOS'
+          # macOS
+          - 'platform=macOS'
+          # tvOS
+          - 'platform=tvOS Simulator,name=Apple TV'
+          - 'generic/platform=tvOS'
+          # watchOS
+          - 'platform=watchOS Simulator,name=Apple Watch Ultra 2 (49mm)'
+          - 'generic/platform=watchOS'
+          # visionOS
+          - 'platform=visionOS Simulator,name=Apple Vision Pro'
+          - 'generic/platform=visionOS'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Default
+        run: xcodebuild -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
+
+      - name: Build With SwiftUI Test Support 
+        env:
+          SWIFTUIAPP_TEST_SUPPORT: TRUE
+        run: xcodebuild -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
+
+  test:
+
+    runs-on: macos-15
+    if: contains(github.event.pull_request.labels.*.name, 'Run Tests')
+    strategy:
+      matrix:
+        config: [debug]
+        destination: 
+          # iOS
+          - 'platform=iOS Simulator,name=iPhone 16 Pro'
+          # macOS
+          - 'platform=macOS'
+          # tvOS
+          - 'platform=tvOS Simulator,name=Apple TV'
+          # watchOS
+          - 'platform=watchOS Simulator,name=Apple Watch Ultra 2 (49mm)'
+          # visionOS
+          - 'platform=visionOS Simulator,name=Apple Vision Pro'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test With SwiftUI Test Support
+        env:
+          SWIFTUIAPP_TEST_SUPPORT: TRUE
+        run: xcodebuild test -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
