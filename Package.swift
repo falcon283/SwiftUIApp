@@ -26,6 +26,7 @@ let package = Package(
   name: "SwiftUIApp",
   platforms: [.iOS(.v13), .watchOS(.v6), .tvOS(.v13), .visionOS(.v1), .macCatalyst(.v13), .macOS(.v10_15)],
   products: Module.allCases.map(\.product),
+  dependencies: [.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.4")],
   targets: Module.allCases.map(\.targets).flatMap { $0 }
 )
 

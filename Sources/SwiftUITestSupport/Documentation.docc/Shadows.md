@@ -41,3 +41,6 @@ Documentation of each Shadows is 100% taken from SwiftUI code documentation.
 - ``FetchedResults``
 - ``SectionedFetchRequest``
 - ``SectionedFetchResults``
+
+### Other
+- ``ScaledMetric``
