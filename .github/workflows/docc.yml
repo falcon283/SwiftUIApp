@@ -58,6 +58,9 @@ jobs:
       - name: Convert Documentation For Static Hosting 
         run: xcrun docc process-archive transform-for-static-hosting ./doccBuild/MergedDocs.doccarchive --output-path ./docs --hosting-base-path "/SwiftUIApp"
 
+      - name: Override Root index.html
+        run: echo '<meta http-equiv="refresh" content="0; url=documentation" />' > ./docs/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
