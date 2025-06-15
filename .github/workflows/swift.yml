@@ -36,12 +36,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          version: latest-stable
+
       - name: Build Default
         run: xcodebuild -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
 
       - name: Build With SwiftUI Test Support 
         env:
-          SWIFTUIAPP_TEST_SUPPORT: TRUE
+          SWIFTUIAPP_TEST_SUPPORT: "TRUE"
         run: xcodebuild -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
 
   test:
@@ -66,7 +71,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          version: latest-stable
+          
       - name: Test With SwiftUI Test Support
         env:
-          SWIFTUIAPP_TEST_SUPPORT: TRUE
+          SWIFTUIAPP_TEST_SUPPORT: "TRUE"
         run: xcodebuild test -scheme SwiftUIApp-Package -configuration ${{ matrix.config }} -destination "${{ matrix.destination }}"
