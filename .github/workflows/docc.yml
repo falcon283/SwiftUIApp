@@ -35,7 +35,7 @@ jobs:
       - name: Build With SwiftUI Test Support 
         env:
           SWIFTUIAPP_TEST_SUPPORT: TRUE
-        run: swift package --allow-writing-to-directory docs generate-documentation --enable-experimental-combined-documentation --target SwiftUIApp --target SwiftAppUtilities --target SwiftUITestSupport --disable-indexing --transform-for-static-hosting --hosting-base-path /SwiftUIApp --output-path docs
+        run: swift package --allow-writing-to-directory docs generate-documentation --enable-experimental-combined-documentation --disable-indexing --transform-for-static-hosting --hosting-base-path /SwiftUIApp --output-path docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
