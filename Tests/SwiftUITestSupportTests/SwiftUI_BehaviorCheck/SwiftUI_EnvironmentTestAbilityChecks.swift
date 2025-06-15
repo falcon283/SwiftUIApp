@@ -60,6 +60,7 @@ extension SwiftUIBehaviour.Given_SwiftUIEnvironment {
     // #expect(view.value == 20)
   }
 
+#if os(iOS)
   @available(iOS 17.0, *)
   func When_ObservableIsUsed_Then_ItsNotTestable() async {
 
@@ -101,4 +102,5 @@ extension SwiftUIBehaviour.Given_SwiftUIEnvironment {
     // Value of type 'some View' has no member 'value'
     // #expect(view.value == 20)
   }
+#endif
 }

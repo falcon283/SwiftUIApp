@@ -16,7 +16,7 @@ public func waiting(
   timeout: DispatchTimeInterval = .milliseconds(500),
   interval polling: DispatchTimeInterval = .milliseconds(1),
   isolation: isolated (any Actor)? = #isolation,
-  now: () -> DispatchTime = DispatchTime.now,
+  now: @Sendable () -> DispatchTime = DispatchTime.now,
   _ expected: @autoclosure () -> Bool
 ) async -> Bool {
   let beginTime = now()

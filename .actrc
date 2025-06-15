@@ -1,0 +1,3 @@
+-P macos-15=-self-hosted
+workflow_dispatch
+-W .github/workflows/swift.yml

@@ -27,6 +27,9 @@
 @_exported import struct SwiftUITestSupport.FocusedValue
 
 @_documentation(visibility: internal)
+@_exported import struct SwiftUITestSupport.ScaledMetric
+
+@_documentation(visibility: internal)
 @_exported import struct SwiftUITestSupport.SceneStorage
 
 @_documentation(visibility: internal)

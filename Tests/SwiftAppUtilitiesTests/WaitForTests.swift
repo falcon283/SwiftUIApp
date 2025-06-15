@@ -97,14 +97,17 @@ struct WaitForTests {
 
     let (stream, continuation) = AsyncStream.makeStream(of: Int.self)
 
+    @ThreadSafe
     var subscribed = false
+    @ThreadSafe
     var completed = false
-    Task {
-      subscribed = true
+
+    Task { [subscribed = $subscribed, completed = $completed] in
+      subscribed.assign(true)
       for await _ in stream {
         await Task.yield()
       }
-      completed = true
+      completed.assign(true)
     }
 
     #expect(await waiting(subscribed))
@@ -121,14 +124,17 @@ struct WaitForTests {
 
     let (stream, continuation) = AsyncStream.makeStream(of: Int.self)
 
+    @ThreadSafe
     var subscribed = false
+    @ThreadSafe
     var completed = false
-    Task.detached {
-      subscribed = true
+
+    Task.detached { [subscribed = $subscribed, completed = $completed] in
+      subscribed.assign(true)
       for await _ in stream {
         await Task.yield()
       }
-      completed = true
+      completed.assign(true)
     }
 
     #expect(await waiting(subscribed))
@@ -144,14 +150,17 @@ struct WaitForTests {
 
     let (stream, continuation) = AsyncStream.makeStream(of: Int.self)
 
+    @ThreadSafe
     var subscribed = false
+    @ThreadSafe
     var completed = false
-    Task.detached {
-      subscribed = true
+
+    Task.detached { [subscribed = $subscribed, completed = $completed] in
+      subscribed.assign(true)
       for await _ in stream {
         await Task.yield()
       }
-      completed = true
+      completed.assign(true)
     }
 
     #expect(await waiting(subscribed))

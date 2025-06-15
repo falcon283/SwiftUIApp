@@ -31,18 +31,17 @@ struct URLSessionHTTPClient: HTTPClient {
       .applyCustomModifiers(self.modifiers)
       .encodePayload(for: request, payload: payload)
 
-    let data: Data
-    let response: URLResponse
+    let result: (data: Data, response: URLResponse)
     do {
-      (data, response) = try await self.dataFor(urlRequest)
+      result = try await self.dataFor(urlRequest)
     } catch {
       throw .requestError(error)
     }
 
     do {
-      return try request.decoder.decode(DTO.self, from: data)
+      return try request.decoder.decode(DTO.self, from: result.data)
     } catch {
-      throw .decodingError(error, response: response)
+      throw .decodingError(error, response: result.response)
     }
   }
 }
@@ -55,7 +54,7 @@ private extension URLRequest {
     defaultHeaders: [String: String]
   ) -> URLRequest {
     let url: URL
-    if #available(iOS 16.0, *) {
+    if #available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
       url = baseURL.appending(path: request.path)
     } else {
       url = baseURL.appendingPathComponent(request.path)

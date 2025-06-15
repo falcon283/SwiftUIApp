@@ -14,8 +14,8 @@
 
 ### Sending Side Effects via Bindings
 
-- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-6ezr4``
-- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-4ktck``
+- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-(_,_,_,UIEvent)``
+- ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-(_,_,_,(Value) -> UIEvent)``
 
 ### Zero Effort Conformance
 
