@@ -1,3 +1,3 @@
 -P macos-15=-self-hosted
-pull_request
--e act-pullrequest-label.json
+workflow_dispatch
+-W .github/workflows/swift.yml

@@ -82,6 +82,25 @@ This setup supports two key use cases:
 
 ---
 
+### Github Actions
+
+The following actions are available on the repository:
+1. `Swift`: Allows Build and Tests for all the available platforms and configurations automatically.
+2. `SwiftUIApp DocC`: Allows building and deploying the DocC documentation as Github Page.
+
+Mind: `Swift` actions are triggered automatically only after a push on the `develop` branch to limit the execution time. 
+If needed the `Swift` action can be executed on demand on PR basis if it gets labeled with `Run Builds` or `Run Tests`.
+
+`SwiftUIApp DocC` documentation deploy is instead triggered automatically on every `develop` branch push.
+
+You can also install some helpers to do some try out locally
+
+#### Act
+- Install act using `brew install act`
+- On terminal run `act`. It runs the default setup provided by `.actrc` available in the repo which build and test all the variants.
+
+---
+
 ## Conclusion
 
 `SwiftUIApp` provides an extremely lightweight foundation for building scalable, testable SwiftUI apps using the tools SwiftUI already offers. It enables developers to integrate testability into their architecture without deviating from standard SwiftUI practices.
@@ -90,13 +109,17 @@ Feel free to explore the library, adapt it to your needs, or use it as a steppin
 
 ## Articles
 
-Do you want to know more about this project? Check out my articles:
+Do you want to know more about this project? Check out my related articles:
+
+### Unit Testing
 
 - [Making SwiftUI Testable 1/5 - Introduction](https://medium.com/@gabrynet83/making-swiftui-testable-1-5-introduction-a8c6b1fb5968)
 - [Making SwiftUI Testable 2/5 - State](https://medium.com/@gabrynet83/making-swiftui-testable-2-5-db296e061dc9)
 - [Making SwiftUI Testable 3/5 - Environment](https://medium.com/@gabrynet83/making-swiftui-testable-3-5-environment-ba84e1a0cf5d)
 - [Making SwiftUI Testable 4/5 - Storage](https://medium.com/@gabrynet83/making-swiftui-testable-4-5-storage-6e9f38c1f15a)
 - [Making SwiftUI Testable 5/5 - CoreData](https://medium.com/@gabrynet83/making-swiftui-testable-5-5-coredata-8ab075fce1d2)
+
+### ViewFeature
 
 - [SwiftUI + ViewFeature 1/3 - Unidirectional Data Flow](https://medium.com/@gabrynet83/swiftui-viewfeature-1-3-unidirectional-data-flow-a59fcbfd2151)
 - [SwiftUI + ViewFeature 2/3 - Task Cancellation](https://medium.com/@gabrynet83/swiftui-viewfeature-2-3-task-cancellation-0e93bd91379f)
