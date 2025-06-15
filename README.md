@@ -1,3 +1,5 @@
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://falcon283.github.io/SwiftUIApp/)
+
 # SwiftUIApp
 
 SwiftUIApp is tiny library with the goal of enabling writing consistent Native SwiftUI code.
@@ -41,6 +43,8 @@ responsible for all the dependency injection of the ViewModel itself since Swift
 - **Test Support**: Code meant to enable `SwiftUI` being Unit Testing friendly. These implementations are opt-in and 
 only available for `Debug` builds. This is made on purpose to avoid any sort of unintentional alteration of the native 
 `SwiftUI` implementations when creating a Release build.
+
+[Checkout here the full documentation](https://falcon283.github.io/SwiftUIApp/documentation/swiftuiapp)
 
 ---
 
