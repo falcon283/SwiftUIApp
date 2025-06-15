@@ -39,17 +39,17 @@ jobs:
           
       - name: Build SwiftUIApp Documentation 
         env:
-          SWIFTUIAPP_TEST_SUPPORT: TRUE
+          SWIFTUIAPP_TEST_SUPPORT: "TRUE"
         run: xcodebuild docbuild -scheme SwiftUIApp -destination 'platform=macOS' -derivedDataPath ./doccBuild
 
       - name: Build SwiftAppUtilities Documentation  
         env:
-          SWIFTUIAPP_TEST_SUPPORT: TRUE
+          SWIFTUIAPP_TEST_SUPPORT: "TRUE"
         run: xcodebuild docbuild -scheme SwiftAppUtilities -destination 'platform=macOS' -derivedDataPath ./doccBuild
 
       - name: Build SwiftUITestSupport Documentation 
         env:
-          SWIFTUIAPP_TEST_SUPPORT: TRUE
+          SWIFTUIAPP_TEST_SUPPORT: "TRUE"
         run: xcodebuild docbuild -scheme SwiftUITestSupport -destination 'platform=macOS' -derivedDataPath ./doccBuild
 
       - name: Merge Documentation 
