@@ -48,7 +48,7 @@ public extension ViewModelFeature {
   /// If your `UIEvent` conforms to `Identifiable` or `NamedEvent` you can omit `withId` parameter and the corresponding `cancellationId`
   /// is extracted with not runtime cost.
   func notify(_ event: UIEvent, storeIn bag: CancellationBag, withId cancellationId: AnyHashable? = nil) {
-    let id = cancellationId ?? Self.cancellationId(for: event)
+    let id = cancellationId ?? Self.eventIdentifier(for: event)
 
     Task { [weak bag] in
       await self.notify(event)
@@ -106,7 +106,7 @@ public extension ViewModelFeature {
 
 extension ViewModelFeature {
 
-  static func cancellationId(for event: UIEvent) -> AnyHashable {
+  static func eventIdentifier(for event: UIEvent) -> AnyHashable {
     (event as? any Identifiable).map { self.extractIdentifiableId(for: $0) } ??
     (event as? any NamedEvent).map { $0.caseName } ??
     self.nonConformingEventDescription(for: event).map(AnyHashable.init) ??

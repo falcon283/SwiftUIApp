@@ -23,8 +23,8 @@ public protocol ViewFeature: ViewModelFeature, View where Body == CancellationBa
   ///
   /// The bag is meant to be used when calling the following methods:
   /// - ``ViewModelFeature/notify(_:storeIn:withId:)``
-  /// - ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-(_,_,_,UIEvent)``
-  /// - ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-(_,_,_,(Value) -> UIEvent)``
+  /// - ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-6ezr4``
+  /// - ``ViewModelFeature/bind(_:storeIn:withId:onChangeNotify:)-4ktck``
   ///
   /// - Parameter bag: The bag required to be used when
   /// - Returns: The view installed into the SwiftUI `body`.

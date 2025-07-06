@@ -22,7 +22,7 @@ struct ViewFeatureCancellationIdTests {
       var object: NSObject
     }
 
-    let id = TestView.cancellationId(for: StructEvent(int: 0, string: "", object: NSObject()))
+    let id = TestView.eventIdentifier(for: StructEvent(int: 0, string: "", object: NSObject()))
 
     #expect(id == "StructEvent { int: Int; string: String; object: NSObject }" as AnyHashable)
   }
@@ -42,7 +42,7 @@ struct ViewFeatureCancellationIdTests {
       }
     }
 
-    let id = TestView.cancellationId(for: ClassEvent(int: 0, string: "", object: NSObject()))
+    let id = TestView.eventIdentifier(for: ClassEvent(int: 0, string: "", object: NSObject()))
 
     #expect(id == "ClassEvent { int: Int; string: String; object: NSObject }" as AnyHashable)
   }
@@ -61,7 +61,7 @@ struct ViewFeatureCancellationIdTests {
       }
     }
 
-    #expect(TestView.cancellationId(for: EnumEvent.foo(int: 0)) == ".foo(int: Int)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.foo(int: 0)) == ".foo(int: Int)" as AnyHashable)
   }
 
   @Test
@@ -77,7 +77,7 @@ struct ViewFeatureCancellationIdTests {
       }
     }
 
-    #expect(TestView.cancellationId(for: EnumEvent.foo(int: 0)) == 111.0 as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.foo(int: 0)) == 111.0 as AnyHashable)
   }
 
   @Test
@@ -93,22 +93,22 @@ struct ViewFeatureCancellationIdTests {
       case associatedReference(ref: NSObject)
     }
 
-    #expect(TestView.cancellationId(for: EnumEvent.simple) == ".simple" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedOne(int: 0)) == ".associatedOne(int: Int)" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedOneNoName(0)) == ".associatedOneNoName(.0: Int)" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedTwo(int: 0, string: "")) == ".associatedTwo(int: Int, string: String)" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedTwoNoName(0, "")) == ".associatedTwoNoName(.0: Int, .1: String)" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedTwoMixed(int: 0, "")) == ".associatedTwoMixed(int: Int, .1: String)" as AnyHashable)
-    #expect(TestView.cancellationId(for: EnumEvent.associatedReference(ref: NSObject())) == ".associatedReference(ref: NSObject)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.simple) == ".simple" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedOne(int: 0)) == ".associatedOne(int: Int)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedOneNoName(0)) == ".associatedOneNoName(.0: Int)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedTwo(int: 0, string: "")) == ".associatedTwo(int: Int, string: String)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedTwoNoName(0, "")) == ".associatedTwoNoName(.0: Int, .1: String)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedTwoMixed(int: 0, "")) == ".associatedTwoMixed(int: Int, .1: String)" as AnyHashable)
+    #expect(TestView.eventIdentifier(for: EnumEvent.associatedReference(ref: NSObject())) == ".associatedReference(ref: NSObject)" as AnyHashable)
   }
 
   @Test
   func Given_TupleEvent_Then_EventDescriptionHasPropertiesLabelAndTypeWithNoValue() async throws {
 
-    #expect(TestView<Int>.cancellationId(for: 0) == "Int" as AnyHashable)
-    #expect(TestView<()>.cancellationId(for: ()) == "()" as AnyHashable)
-    #expect(TestView<(Int)>.cancellationId(for: 0) == "Int" as AnyHashable)
-    #expect(TestView<(Int, String)>.cancellationId(for: (0, "")) == "(.0: Int, .1: String)" as AnyHashable)
-    #expect(TestView<(int: Int, string: String)>.cancellationId(for: (0, "")) == "(int: Int, string: String)" as AnyHashable)
+    #expect(TestView<Int>.eventIdentifier(for: 0) == "Int" as AnyHashable)
+    #expect(TestView<()>.eventIdentifier(for: ()) == "()" as AnyHashable)
+    #expect(TestView<(Int)>.eventIdentifier(for: 0) == "Int" as AnyHashable)
+    #expect(TestView<(Int, String)>.eventIdentifier(for: (0, "")) == "(.0: Int, .1: String)" as AnyHashable)
+    #expect(TestView<(int: Int, string: String)>.eventIdentifier(for: (0, "")) == "(int: Int, string: String)" as AnyHashable)
   }
 }

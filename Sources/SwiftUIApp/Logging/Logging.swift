@@ -74,6 +74,6 @@ public extension ViewModelFeature {
   /// }
   /// ```
   func standardMessageFor(_ event: UIEvent) -> String {
-    return "\(Self.self) - notify(\(Self.cancellationId(for: event)))"
+    return "\(Self.self) - notify(\(Self.eventIdentifier(for: event)))"
   }
 }
