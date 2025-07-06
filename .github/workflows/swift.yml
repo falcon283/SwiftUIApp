@@ -52,7 +52,7 @@ jobs:
         if: ${{ !env.ACT }}
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          version: latest-stable
+          xcode-version: latest-stable
 
       - name: Build Default
         env:
@@ -94,7 +94,7 @@ jobs:
         if: ${{ !env.ACT }}
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          version: latest-stable
+          xcode-version: latest-stable
           
       - name: Test With SwiftUI Test Support
         env:

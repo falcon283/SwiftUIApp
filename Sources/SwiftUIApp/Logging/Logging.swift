@@ -74,6 +74,6 @@ public extension ViewModelFeature {
   /// }
   /// ```
   func standardMessageFor(_ event: UIEvent) -> String {
-    return "\(Self.self) - notify(\(Self.eventDescription(for: event) ?? "\(UIEvent.self)")))"
+    return "\(Self.self) - notify(\(Self.eventIdentifier(for: event)))"
   }
 }
