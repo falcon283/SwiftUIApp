@@ -22,11 +22,9 @@ struct ViewFeatureCancellationIdTests {
       var object: NSObject
     }
 
-    let description = TestView.eventDescription(for: StructEvent(int: 0, string: "", object: NSObject()))
     let id = TestView.cancellationId(for: StructEvent(int: 0, string: "", object: NSObject()))
 
-    #expect(description == "StructEvent { int: Int; string: String; object: NSObject }")
-    #expect(id.description == description)
+    #expect(id == "StructEvent { int: Int; string: String; object: NSObject }" as AnyHashable)
   }
 
   @Test
@@ -44,11 +42,42 @@ struct ViewFeatureCancellationIdTests {
       }
     }
 
-    let description = TestView.eventDescription(for: ClassEvent(int: 0, string: "", object: NSObject()))
     let id = TestView.cancellationId(for: ClassEvent(int: 0, string: "", object: NSObject()))
 
-    #expect(description == "ClassEvent { int: Int; string: String; object: NSObject }")
-    #expect(id.description == description)
+    #expect(id == "ClassEvent { int: Int; string: String; object: NSObject }" as AnyHashable)
+  }
+
+  @Test
+  func Given_NamedEnumerationUIEvent_Then_EventDescriptionIsTheCaseName() async throws {
+
+    enum EnumEvent: NamedEvent {
+      case foo(int: Int)
+
+      var caseName: String {
+        switch self {
+        case .foo:
+          ".foo(int: Int)"
+        }
+      }
+    }
+
+    #expect(TestView.cancellationId(for: EnumEvent.foo(int: 0)) == ".foo(int: Int)" as AnyHashable)
+  }
+
+  @Test
+  func Given_IdentifiableUIEvent_Then_EventDescriptionIsTheId() async throws {
+
+    enum EnumEvent: Identifiable {
+      case foo(int: Int)
+
+      var id: Double {
+        switch self {
+        case .foo: 111.0
+        }
+      }
+    }
+
+    #expect(TestView.cancellationId(for: EnumEvent.foo(int: 0)) == 111.0 as AnyHashable)
   }
 
   @Test
@@ -64,71 +93,22 @@ struct ViewFeatureCancellationIdTests {
       case associatedReference(ref: NSObject)
     }
 
-    #expect(TestView.eventDescription(for: EnumEvent.simple) == ".simple")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.simple).description ==
-      TestView.eventDescription(for: EnumEvent.simple)
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedOne(int: 0)) == ".associatedOne(int: Int)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedOne(int: 0)).description ==
-      TestView.eventDescription(for: EnumEvent.associatedOne(int: 0))
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedOneNoName(0)) == ".associatedOneNoName(.0: Int)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedOneNoName(0)).description ==
-      TestView.eventDescription(for: EnumEvent.associatedOneNoName(0))
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedTwo(int: 0, string: "")) == ".associatedTwo(int: Int, string: String)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedTwo(int: 0, string: "")).description ==
-      TestView.eventDescription(for: EnumEvent.associatedTwo(int: 0, string: ""))
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedTwoNoName(0, "")) == ".associatedTwoNoName(.0: Int, .1: String)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedTwoNoName(0, "")).description ==
-      TestView.eventDescription(for: EnumEvent.associatedTwoNoName(0, ""))
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedTwoMixed(int: 0, "")) == ".associatedTwoMixed(int: Int, .1: String)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedTwoMixed(int: 0, "")).description ==
-      TestView.eventDescription(for: EnumEvent.associatedTwoMixed(int: 0, ""))
-    )
-
-    #expect(TestView.eventDescription(for: EnumEvent.associatedReference(ref: NSObject())) == ".associatedReference(ref: NSObject)")
-    #expect(
-      TestView.cancellationId(for: EnumEvent.associatedReference(ref: NSObject())).description ==
-      TestView.eventDescription(for: EnumEvent.associatedReference(ref: NSObject()))
-    )
+    #expect(TestView.cancellationId(for: EnumEvent.simple) == ".simple" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedOne(int: 0)) == ".associatedOne(int: Int)" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedOneNoName(0)) == ".associatedOneNoName(.0: Int)" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedTwo(int: 0, string: "")) == ".associatedTwo(int: Int, string: String)" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedTwoNoName(0, "")) == ".associatedTwoNoName(.0: Int, .1: String)" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedTwoMixed(int: 0, "")) == ".associatedTwoMixed(int: Int, .1: String)" as AnyHashable)
+    #expect(TestView.cancellationId(for: EnumEvent.associatedReference(ref: NSObject())) == ".associatedReference(ref: NSObject)" as AnyHashable)
   }
 
   @Test
   func Given_TupleEvent_Then_EventDescriptionHasPropertiesLabelAndTypeWithNoValue() async throws {
 
-    #expect(TestView<Int>.eventDescription(for: 0) == "Int")
-    #expect(TestView<Int>.cancellationId(for: 0).description == TestView<Int>.eventDescription(for: 0))
-
-    #expect(TestView<()>.eventDescription(for: ()) == "()")
-    #expect(TestView<()>.cancellationId(for: ()).description == TestView<()>.eventDescription(for: ()))
-
-    #expect(TestView<(Int)>.eventDescription(for: 0) == "Int")
-    #expect(TestView<(Int)>.cancellationId(for: 0).description == TestView<(Int)>.eventDescription(for: 0))
-
-    #expect(TestView<(Int, String)>.eventDescription(for: (0, "")) == "(.0: Int, .1: String)")
-    #expect(
-      TestView<(Int, String)>.cancellationId(for: (0, "")).description ==
-      TestView<(Int, String)>.eventDescription(for: (0, ""))
-    )
-
-    #expect(TestView<(int: Int, string: String)>.eventDescription(for: (0, "")) == "(int: Int, string: String)")
-    #expect(
-      TestView<(int: Int, string: String)>.cancellationId(for: (0, "")).description ==
-      TestView<(int: Int, string: String)>.eventDescription(for: (0, ""))
-    )
+    #expect(TestView<Int>.cancellationId(for: 0) == "Int" as AnyHashable)
+    #expect(TestView<()>.cancellationId(for: ()) == "()" as AnyHashable)
+    #expect(TestView<(Int)>.cancellationId(for: 0) == "Int" as AnyHashable)
+    #expect(TestView<(Int, String)>.cancellationId(for: (0, "")) == "(.0: Int, .1: String)" as AnyHashable)
+    #expect(TestView<(int: Int, string: String)>.cancellationId(for: (0, "")) == "(int: Int, string: String)" as AnyHashable)
   }
 }
